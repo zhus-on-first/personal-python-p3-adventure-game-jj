@@ -5,10 +5,11 @@ from models.__init__ import CURSOR, CONN
 class Monster:
     ALL = {}
 
-    def __init__(self, type, hp, power, healing_item, name=None, id=None):
+    def __init__(self, type, description, hp, power, healing_item, name=None, id=None):
         self.id = id
         self.name = name
         self.type = type
+        self.description = description
         self.hp = hp
         self.power = power
         self.healing_item = healing_item
@@ -35,6 +36,18 @@ class Monster:
     def type(self, type):
         if isinstance(type, str):
             self._type = type
+        else:
+            raise ValueError("Type must be a string.")
+        
+    # Getter and Setter for description
+    @property
+    def description(self):
+        return self._description
+    
+    @description.setter
+    def description(self, description):
+        if isinstance(description, str):
+            self._description = description
         else:
             raise ValueError("Type must be a string.")
 
@@ -94,6 +107,7 @@ class Monster:
                   id INTEGER PRIMARY KEY,
                   name TEXT,
                   type TEXT,
+                  description TEXT,
                   hp INTEGER,
                   power INTEGER,
                   healing_item BOOLEAN)
@@ -108,10 +122,10 @@ class Monster:
         CONN.commit()
 
     def save(self):
-        sql = """INSERT INTO monsters (name, type, hp, power, healing_item)
+        sql = """INSERT INTO monsters (name, type, description, hp, power, healing_item)
                  VALUES (?, ?, ?)"""
         CURSOR.execute(sql, (
-                            self.name, self.type, self.hp, self.power, self.healing_item
+                            self.name, self.type, self.description, self.hp, self.power, self.healing_item
                             )
                         )
         CONN.commit()
@@ -120,11 +134,11 @@ class Monster:
 
     def update(self):
         sql = """UPDATE monsters
-                 SET name = ?, type = ?, hp = ?, power =?, healing_item = ?
+                 SET name = ?, type = ?, description = ?, hp = ?, power =?, healing_item = ?
                  WHERE id = ?"""
         CURSOR.execute(sql, (
-                            self.name, self.type, self.hp, self.power, 
-                            self.healing_item, self.id)
+                            self.name, self.type, self. description, self.hp, 
+                            self.power, self.healing_item, self.id)
                         )
         CONN.commit()
 
@@ -141,11 +155,12 @@ class Monster:
         if monster:
             monster.name = row[1]
             monster.type = row[2]
-            monster.hp = row[3]
-            monster.power = row[4]
-            monster.healing_item = row[5]
+            monster.description = row[3]
+            monster.hp = row[4]
+            monster.power = row[5]
+            monster.healing_item = row[6]
         else:
-            monster = cls(row[1], row[2], row[3], row[4], row[5])
+            monster = cls(row[1], row[2], row[3], row[4], row[5], row[6])
             monster.id = row[0]
             cls.ALL[monster.id] = monster
         return monster

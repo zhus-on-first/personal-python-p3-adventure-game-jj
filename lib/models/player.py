@@ -20,20 +20,20 @@ class Player:
         return self._username
 
     @username.setter
-    def username(self, username, is_username_unique):
+    # TODO is_username_unique validation
+    def username(self, username):
         if not isinstance(username, str):
             raise ValueError("Username must be a string.")
 
-        if not 5 <= len(username) <= 20:
+        if not 3 <= len(username) <= 20:
             raise ValueError("Username must be between 3 and 20 characters.")
 
         if not re.match("^[a-zA-Z0-9_]*$", username):
             raise ValueError(
                 "Username can only contain letters, numbers, and underscores."
                 )
-
-        if not is_username_unique(username):
-            raise ValueError("This username is already taken. Sowie.")
+        # if not is_username_unique(username):
+        #     raise ValueError("This username is already taken. Sowie.")
 
         self._username = username
 
@@ -42,12 +42,13 @@ class Player:
         return self._email
 
     @email.setter
-    def email(self, email, is_email_unique):
+    def email(self, email):
+        # TODO is_email_unique validation
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             raise ValueError("Email is not in a valid format.")
 
-        if not is_email_unique(email):
-            raise ValueError("This email is already taken.")
+        # if not is_email_unique(email):
+        #     raise ValueError("This email is already taken.")
 
         self._email = email
 
@@ -58,8 +59,8 @@ class Player:
         sql = """
             CREATE TABLE IF NOT EXISTS players (
             id INTEGER PRIMARY KEY,
-            name TEXT,
-            location TEXT)
+            username TEXT,
+            email TEXT)
         """
         CURSOR.execute(sql)
         CONN.commit()
@@ -75,10 +76,12 @@ class Player:
 
     def save(self):
         # Save player instance to new database row
-        sql = """
-            INSERT INTO players (username, email)
-            VALUES (?, ?)
-        """
+        # TODO set a check if table already exists.
+        if CURSOR.execute("SELECT 1 from players LIMIT 1"):
+            sql = """
+                INSERT INTO players (username, email)
+                VALUES (?, ?)
+            """
 
         # Update object id attribute using the primary key value of new row
         CURSOR.execute(sql, (self.username, self.email))
@@ -174,36 +177,36 @@ class Player:
         return cls.instance_from_db(row) if row else None
 
 
-    @classmethod
-    def is_username_unique(cls, username):
-        # Search in-memory
-        is_unique_in_memory = not any(player.username == username for player in cls.ALL.values())
+    # @classmethod
+    # def is_username_unique(cls, username):
+    #     # Search in-memory
+    #     is_unique_in_memory = not any(player.username == username for player in cls.ALL.values())
 
-        # Search in database
-        sql = """
-            SELECT * 
-            FROM players
-            WHERE username is ?
-        """
-        row = CURSOR.execute(sql, (username,)).fetchone()
-        is_unique_in_db = row is None
+    #     # Search in database
+    #     sql = """
+    #         SELECT * 
+    #         FROM players
+    #         WHERE username is ?
+    #     """
+    #     row = CURSOR.execute(sql, (username,)).fetchone()
+    #     is_unique_in_db = row is None
 
-        # if a result, return False; else: return True
-        return is_unique_in_db and is_unique_in_memory
+    #     # if a result, return False; else: return True
+    #     return is_unique_in_db and is_unique_in_memory
 
-    @classmethod
-    def is_email_unique(cls, email):
-        # Search in-memory
-        is_unique_in_memory = not any(player.username == email for player in cls.ALL.values())
+    # @classmethod
+    # def is_email_unique(cls, email):
+    #     # Search in-memory
+    #     is_unique_in_memory = not any(player.username == email for player in cls.ALL.values())
 
-        # Search in database
-        sql = """
-            SELECT * 
-            FROM players
-            WHERE email is ?
-        """
-        row = CURSOR.execute(sql, (email,)).fetchone()
-        is_unique_in_db = row is None
+    #     # Search in database
+    #     sql = """
+    #         SELECT * 
+    #         FROM players
+    #         WHERE email is ?
+    #     """
+    #     row = CURSOR.execute(sql, (email,)).fetchone()
+    #     is_unique_in_db = row is None
 
-        # if a result, return False (not unique); else: return True
-        return is_unique_in_db and is_unique_in_memory
+    #     # if a result, return False (not unique); else: return True
+    #     return is_unique_in_db and is_unique_in_memory

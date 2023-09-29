@@ -1,4 +1,4 @@
-# Manages state of game: interchoices between scenario, monster, character
+# Manages state of game: choices between scenario, monster, character
 # Methods for how game mechanics work
 
 from models.player import Player
@@ -15,11 +15,57 @@ class Game:
         self.current_monster = None
         self.current_scenario = None
 
-    def register_player(self, name, email):
-        self.player = Player(name, email)
+    def register_player(self):
+        while True:
+            print("Let's register your account first.")
+            player_username = input("Enter your user name: ")
+            player_email = input("Enter your email: ")
 
-    def choose_character(self, character_choice):
-        self.character = Character(character_choice)
+            try:
+                # Initialize Player instance
+                self.player = Player(player_username, player_email)
+                break
+            except ValueError as e:
+                print(e)
+                continue
+    
+        # Create table and save player object to db
+        self.player.create_table()
+        self.player.save()
+
+    def choose_character(self):
+        while True:
+            # Display available characters
+            print("Available characters:")
+            for index, character in enumerate(default_characters):
+                print(f"{index}. {character['Class']}")
+
+            # Set user's character choice
+            choice = input("Enter the number of the character you want: ")
+
+            try:
+                if choice.isdigit():
+                    character_choice = default_characters[int(choice)]
+                    self.character = Character(character_choice, self.player.id)
+                    break
+                else: 
+                    print("Invalid choice. Please enter a digit corresponding to the character type you want.")
+                    
+            except ValueError as e:
+                print(e)
+        while True:
+            try:
+                # Set custom character name
+                custom_name = input("Enter a name for your character: ")
+                self.character.name = custom_name
+                break
+            except ValueError as e:
+                print(e)
+                continue
+
+        # Save character type selection and custom name to db
+        self.character.create_table()
+        self.character.save()
 
     def random_encounter(self):
         # Generate a random scenario with random monster
@@ -30,7 +76,7 @@ class Game:
         # Battle sequence
         # Player's turn
         # Monster's turn
-        #Victory or death!
+        # Victory or death!
         pass
 
     def start_game(self, name, email, character_choice):
