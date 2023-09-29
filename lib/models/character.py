@@ -1,20 +1,19 @@
 from models.__init__ import CURSOR, CONN
 from models.player import Player
-from data.default_characters import default_characters
 import re
 
 class Character:
     ALL = {}
 
-    def __init__(self, default_characters, player_id, id=None):
+    def __init__(self, name, character_class, character_description, xp, hp, mp, power, player_id, id=None):
         self.id = id
-        self.name = default_characters.get("Name", "Unknown")
-        self.character_class = default_characters.get("Class", "Unknown")
-        self.character_description = default_characters.get("Description", "Unknown")
-        self.xp = default_characters.get("XP", 0)
-        self.hp = default_characters.get("HP", 0)
-        self.mp = default_characters.get("MP", 0)
-        self.power = default_characters.get("Power", 0)
+        self.name = name
+        self.character_class = character_class
+        self.character_description = character_description
+        self.xp = xp
+        self.hp = hp
+        self.mp = mp
+        self.power = power
         self.player_id = player_id
 
     def __repr__(self):
@@ -23,6 +22,7 @@ class Character:
         return (
             f"<Character {self.id}: {self.name}, "
             f"Class: {self.character_class}, "
+            f"Class: {self.character_description}, "
             f"XP: {self.xp}, "
             f"HP: {self.hp}, "
             f"MP: {self.mp}, "
@@ -70,6 +70,17 @@ class Character:
             self._character_class = character_class
         else:
             raise ValueError("Character class must be a string.")
+        
+    @property
+    def character_description(self):
+        return self._character_description
+    
+    @character_description.setter
+    def character_description(self, character_description):
+        if isinstance(character_description, str):
+            self._character_description = character_description
+        else:
+            raise ValueError("Character description must be a string.")
 
     @property
     def xp(self):
@@ -135,6 +146,7 @@ class Character:
             id INTEGER PRIMARY KEY,
             name TEXT,
             character_class TEXT,
+            character_description TEXT,
             xp INTEGER,
             hp INTEGER,
             mp INTEGER,
@@ -158,13 +170,13 @@ class Character:
     def save(self):
         # Save character instance to new database row
         sql = """
-            INSERT INTO characters (name, character_class, xp, hp, mp, power, player_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO characters (name, character_class, character_description, xp, hp, mp, power, player_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
 
         # Update object id attribute using the primary key value of new row
         CURSOR.execute(sql, (
-            self.name, self.character_class, self.xp, self.hp, self.mp, self.power, self.player_id
+            self.name, self.character_class, self.character_description, self.xp, self.hp, self.mp, self.power, self.player_id
             ))
         CONN.commit()
 
@@ -176,11 +188,11 @@ class Character:
         # Update this character's table row corresponding to the current Character instance
         sql = """
             UPDATE characters
-            SET name = ?, character_class = ?, xp = ?, hp = ?, mp = ?, power = ?, player_id = ?
+            SET name = ?, character_class = ?, character_description = ?, xp = ?, hp = ?, mp = ?, power = ?, player_id = ?
             WHERE id = ?
         """
         CURSOR.execute(sql, (
-                            self.name, self.character_class, self.xp, self.hp, self.mp, 
+                            self.name, self.character_class, self.character_description, self.xp, self.hp, self.mp, 
                             self.power, self.player_id
                             )
                         )
@@ -202,14 +214,15 @@ class Character:
         self.id = None
 
     @classmethod
-    def create(cls, name, character_class, xp, hp, mp, power, player_id):
+    def create(cls, name, character_class, character_description, xp, hp, mp, power, player_id):
         # Create a new character instance and save it to database row
-        character = cls(name, character_class, xp, hp, mp, power, player_id)
+        character = cls(name, character_class, character_description, xp, hp, mp, power, player_id)
         character.save()
         return character
 
     @classmethod
     def instance_from_db(cls, row):
+        print("database row:", row)
         # Return a character object with attributes from correct table row
 
         # Check the dictionary for an existing instance using the row's primary key
@@ -218,14 +231,15 @@ class Character:
             # ensure attributes match row values in case local instance was modified
             character.name = row[1]
             character.character_class = row[2]
-            character.xp = row[3]
-            character.hp = row[4]
-            character.mp = row[5]
-            character.power = row[6]
-            character.player_id = row[7]
+            character.character_description = row[3]
+            character.xp = row[4]
+            character.hp = row[5]
+            character.mp = row[6]
+            character.power = row[7]
+            character.player_id = row[8]
         else:
             # not in dictionary, create new instance and add to dictionary
-            character = cls(row[1], row[2], row[3], row[4], row[5], row[6], row[7])
+            character = cls(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
             character.id = row[0]
             cls.ALL[character.id] = character
         return character

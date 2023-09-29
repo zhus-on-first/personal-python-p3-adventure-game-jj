@@ -40,13 +40,20 @@ class Game:
             for index, character in enumerate(default_characters):
                 print(f"{index}. {character['Class']}")
 
-            # Set user's character choice
+            # Set user"s character choice
             choice = input("Enter the number of the character you want: ")
 
             try:
                 if choice.isdigit():
                     character_choice = default_characters[int(choice)]
-                    self.character = Character(character_choice, self.player.id)
+                    self.character = Character(name=character_choice.get("Name", "Unknown"), 
+                           character_class = character_choice.get("Class", "Unknown"),
+                           character_description = character_choice.get("Description", "Unknown"),
+                           xp = character_choice.get("XP", 0),
+                           hp = character_choice.get("HP", 0),
+                           mp = character_choice.get("MP", 0),
+                           power = character_choice.get("Power", 0),
+                           player_id = self.player.id)
                     break
                 else: 
                     print("Invalid choice. Please enter a digit corresponding to the character type you want.")
@@ -74,23 +81,20 @@ class Game:
 
     def battle(self):
         # Battle sequence
-        # Player's turn
-        # Monster's turn
+        # Player"s turn
+        # Monster"s turn
         # Victory or death!
         pass
 
-    def start_game(self, name, email, character_choice):
-        pass
+    # def start_game(self, name, email, character_choice):
+    #     pass
 
-    def save_game(self, player, current_scenario, current_monster):
-        pass
+    # def save_game(self, player, current_scenario, current_monster):
+    #     pass
 
-    def load_game(self, player_id):
-        pass
-    
-    def view_stats(self):
-        pass
+    # def load_game(self, player_id):
+    #     pass
 
-    def exit_game():
-        print(f"Thanks for playing {player.name}. See you next time!")
-        exit()
+    # def exit_game():
+    #     print("Thanks for playing. See you next time!")
+    #     exit()
