@@ -45,7 +45,6 @@ default_characters = [
             "HP": 80,
             "MP": 60,
             "Power": 50,
-            "Description": """A jack of many trades that uses performance skills 
-                            and magic."""
+            "Description": "A jack of many trades that uses performance skills and magic."
         }
         ]

@@ -46,7 +46,7 @@ def main():
             elif choice == "4":
                 game.exit_game()
             else:
-                print("Invalid option. Please try again.")
+                print("Invalid choice selection. Please try again.")
                 continue
 
         except Exception as e:
