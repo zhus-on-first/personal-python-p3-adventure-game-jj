@@ -45,8 +45,8 @@ class Game:
         for index, character in enumerate(default_characters):
             table.add_rows([
                 ["Index", "Class", "Description", "HP", "MP", "Power"],
-                [index, character['Class'], character['Description'], character['HP'], 
-                 character['MP'], character['Power']]
+                [index, character["Class"], character["Description"], character["HP"], 
+                 character["MP"], character["Power"]]
 ])
 
         # Display formatted table
@@ -60,8 +60,7 @@ class Game:
             try:
                 if choice.isdigit():
                     character_choice = default_characters[int(choice)]
-                    self.character = Character
-                    (
+                    self.character = Character(
                         name = character_choice.get("Name", "Unknown"), 
                         character_class = character_choice.get("Class", "Unknown"),
                         character_description = character_choice.get("Description", "Unknown"),
