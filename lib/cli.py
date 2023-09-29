@@ -2,45 +2,39 @@
 # Initializes Player and Game
 # Main game loop
 
-from models.player import Player
-from models.character import Character
 from game import Game
 
 def main():
-    print("Welcome to the Choose-Your-Adventure game!")
-    
-    player_name = input("Enter your name: ")
-    player_email = input("Enter your email: ")
-
-    # Get player's character choice
-    character_choice = input("Choose your character type")
-
-    # Initialize game with player and pass onto Game
-    game = Game()
-    
-    game.start_game(player_name, player_email, character_choice)
+    #Initialize game to prevent error if choose 2-4.
+    game = None
 
     # Main game loop
     while True:
+        print("Welcome to Choose-Your-Adventure. What would you like to do?")
         print_main_menu()
         
-        choice = input(f"Welcome {player_name}. What would you like to do?")
+        choice = input()
         
         if choice == "1":
-            # start new game session
+            # Start new game session. Initialize game with player and pass onto Game.
+            game = Game(None, None)
+            game.register_player()
+            game.choose_character()
             game.start_game()
+
         elif choice == "2":
             # load previous game
             game.load_game()
+
         elif choice == "3":
             # view character stats belonging to specific player
             game.view_stats()
-        elif choice == "5":
-            pass
-        elif choice == "???":
+
+        elif choice == "4":
             game.exit_game()
         else:
             print("Invalid option. Please try again.")
+
 
 def print_main_menu():
     print("1. Start New Game")

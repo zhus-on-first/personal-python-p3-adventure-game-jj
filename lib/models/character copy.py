@@ -8,13 +8,12 @@ class Character:
 
     def __init__(self, default_characters, player_id, id=None):
         self.id = id
-        self.name = default_characters.get("Name", "Unknown")
-        self.character_class = default_characters.get("Class", "Unknown")
-        self.character_description = default_characters.get("Description", "Unknown")
-        self.xp = default_characters.get("XP", 0)
-        self.hp = default_characters.get("HP", 0)
-        self.mp = default_characters.get("MP", 0)
-        self.power = default_characters.get("Power", 0)
+        self.name = character_data.get('Name', 'Unknown')
+        self.character_class = character_data.get('Class', 'Unknown')
+        self.xp = character_data.get('XP', 0)
+        self.hp = character_data.get('HP', 0)
+        self.mp = character_data.get('MP', 0)
+        self.power = character_data.get('Power', 0)
         self.player_id = player_id
 
     def __repr__(self):
@@ -36,7 +35,6 @@ class Character:
 
     @name.setter
     def name(self, name):
-        # TODO a unique name check
         if not isinstance(name, str):
             raise ValueError("The character name must be a string.")
 
@@ -55,14 +53,14 @@ class Character:
                 "The character's name can only contain letters and underscores."
                 )
 
-        # if not self.is_name_unique(name):
-        #     raise ValueError("The character name must be unique.")
+        if not self.is_name_unique(name):
+            raise ValueError("The character name must be unique.")
 
         self._name = name
 
     @property
     def character_class(self):
-        return self._character_class
+        return self._class
     
     @character_class.setter
     def character_class(self, character_class):
@@ -108,8 +106,8 @@ class Character:
     def power(self):
         return self._power
 
-    @power.setter
-    def power(self, power):
+    @mp.setter
+    def mp(self, power):
         if isinstance(power, int) and power >= 0:
             self._power = power
         else:
@@ -266,19 +264,19 @@ class Character:
         row = CURSOR.execute(sql, (name,)).fetchone()
         return cls.instance_from_db(row) if row else None
 
-    # @classmethod
-    # def is_name_unique(cls, name):
-    #     # Search in-memory
-    #     is_unique_in_memory = not any(player.name == name for player in cls.ALL.values())
+    @classmethod
+    def is_name_unique(cls, name):
+        # Search in-memory
+        is_unique_in_memory = not any(player.name == name for player in cls.ALL.values())
 
-    #     # Search in database
-    #     sql = """
-    #         SELECT * 
-    #         FROM characters
-    #         WHERE name is ?
-    #     """
-    #     row = CURSOR.execute(sql, (name,)).fetchone()
-    #     is_unique_in_db = row is None
+        # Search in database
+        sql = """
+            SELECT * 
+            FROM characters
+            WHERE name is ?
+        """
+        row = CURSOR.execute(sql, (name,)).fetchone()
+        is_unique_in_db = row is None
 
-    #     # if a result, return False; else: return True
-    #     return is_unique_in_db and is_unique_in_memory
+        # if a result, return False; else: return True
+        return is_unique_in_db and is_unique_in_memory
