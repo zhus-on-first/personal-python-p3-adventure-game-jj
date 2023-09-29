@@ -61,7 +61,7 @@ class Monster:
         if isinstance(hp, int) and hp >= 0:
             self._hp = hp
         else:
-            raise ValueError("hp must be a positive integer.")
+            raise ValueError("HP must be a positive integer.")
         
     # Getter and Setter for Power
     @property

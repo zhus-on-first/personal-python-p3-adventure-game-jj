@@ -19,27 +19,28 @@ def main():
         
         try:
             if choice == "1":
+                print("-" * 50)
                 # Start new game session. Initialize game with player and pass onto Game.
                 game = Game(None, None)
                 game.register_player()
                 game.choose_character()
                 game.start_game()
                 print("Enter your choice >>")
-                print("=" * 50)
+                print("-" * 50)
                 continue
 
             elif choice == "2":
+                print("-" * 50)
                 # load previous game
                 game.load_game()
-                print("Enter your choice >>")
-                print("=" * 50)
+                print("-" * 50)
                 continue
 
             elif choice == "3":
+                print("-" * 50)
                 # view character stats belonging to specific player
                 view_db_stats()
-                print("Enter your choice >>")
-                print("=" * 50)
+                print("-" * 50)
                 continue
 
             elif choice == "4":
@@ -57,7 +58,7 @@ def main():
 def print_main_menu():
     print("1. Start New Game")
     print("2. Load Previous Game")
-    print("3. View Your Character Stats")
+    print("3. View Your Characters' Stats")
     print("4. Exit")
 
 def view_db_stats():
