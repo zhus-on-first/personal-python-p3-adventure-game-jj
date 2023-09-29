@@ -8,6 +8,7 @@ from data.default_monsters import default_monsters
 from data.default_scenarios import default_scenarios
 import random
 from texttable import Texttable
+
 class Game:
     def __init__(self, player, character):
         self.player = player
@@ -59,14 +60,17 @@ class Game:
             try:
                 if choice.isdigit():
                     character_choice = default_characters[int(choice)]
-                    self.character = Character(name=character_choice.get("Name", "Unknown"), 
-                           character_class = character_choice.get("Class", "Unknown"),
-                           character_description = character_choice.get("Description", "Unknown"),
-                           xp = character_choice.get("XP", 0),
-                           hp = character_choice.get("HP", 0),
-                           mp = character_choice.get("MP", 0),
-                           power = character_choice.get("Power", 0),
-                           player_id = self.player.id)
+                    self.character = Character
+                    (
+                        name = character_choice.get("Name", "Unknown"), 
+                        character_class = character_choice.get("Class", "Unknown"),
+                        character_description = character_choice.get("Description", "Unknown"),
+                        xp = character_choice.get("XP", 0),
+                        hp = character_choice.get("HP", 0),
+                        mp = character_choice.get("MP", 0),
+                        power = character_choice.get("Power", 0),
+                        player_id = self.player.id
+                    )
                     break # Exit loop if successful
                 # else: 
                 #     print("Invalid choice. Please enter a digit corresponding to the character type you want.")
